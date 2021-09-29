@@ -1,11 +1,13 @@
 package com.example.debuggingchallenge
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_selection_view_holder.view.*
 
-class ListSelectionRecyclerViewAdapter(private val stateAndCapitals: ArrayList<ArrayList<String>>) :
+class ListSelectionRecyclerViewAdapter(private val stateAndCapitals: ArrayList<ArrayList<String>>,context:Context) :
     RecyclerView.Adapter<ListSelectionViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListSelectionViewHolder {
@@ -22,6 +24,9 @@ class ListSelectionRecyclerViewAdapter(private val stateAndCapitals: ArrayList<A
         holder.itemView.apply{
            tvCountry.text=country
            tvCabital.text=capital
+            llcard.setOnClickListener{
+                Toast.makeText(context, "The capital city of $country is $capital",Toast.LENGTH_LONG).show()
+            }
         }
 
     }

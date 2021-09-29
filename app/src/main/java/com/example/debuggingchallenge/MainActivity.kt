@@ -1,6 +1,7 @@
 package com.example.debuggingchallenge
 
-import android.content.DialogInterface
+
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var listsRecyclerView: RecyclerView
     private lateinit var fabButton: FloatingActionButton
     private lateinit var alertDialogSubmitBtn: Button
+    private lateinit var sharedPreferences: SharedPreferences
     private var arrayListOfCountriesAndCapitals = arrayListOf(
         arrayListOf("Saudi Arabia", "Riyadh"),
         arrayListOf("Nigeria", "Abuja"),
@@ -29,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         fabButton = findViewById(R.id.fabBtn)
         setupRecyclerView()
@@ -71,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                     //Add single entry list to Global list
                     arrayListOfCountriesAndCapitals.add(singleUserEntryList)
                     listsRecyclerView.adapter!!.notifyDataSetChanged()
+                    listsRecyclerView.scrollToPosition(arrayListOfCountriesAndCapitals.size - 1)
 
                     alertDialog.dismiss()
                 }
@@ -92,7 +97,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         listsRecyclerView = findViewById(R.id.lists_recyclerview)
         listsRecyclerView.adapter =
-            ListSelectionRecyclerViewAdapter(arrayListOfCountriesAndCapitals)
+            ListSelectionRecyclerViewAdapter(arrayListOfCountriesAndCapitals,this)
         listsRecyclerView.layoutManager = LinearLayoutManager(this)
     }
+
 }

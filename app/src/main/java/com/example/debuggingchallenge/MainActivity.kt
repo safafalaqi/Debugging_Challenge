@@ -1,6 +1,7 @@
 package com.example.debuggingchallenge
 
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fabButton: FloatingActionButton
     private lateinit var alertDialogSubmitBtn: Button
     private lateinit var sharedPreferences: SharedPreferences
+
     private var arrayListOfCountriesAndCapitals = arrayListOf(
         arrayListOf("Saudi Arabia", "Riyadh"),
         arrayListOf("Nigeria", "Abuja"),
@@ -32,11 +36,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        sharedPreferences = this.getSharedPreferences(
+            getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+
+        //if the shared preference list is not empty update the  list
+        if(!getItemList("key").isEmpty())
+            arrayListOfCountriesAndCapitals=getItemList("key")
 
 
         fabButton = findViewById(R.id.fabBtn)
         setupRecyclerView()
-
 
         fabButton.setOnClickListener {
             val singleUserEntryList = arrayListOf<String>()
@@ -78,10 +87,12 @@ class MainActivity : AppCompatActivity() {
                     listsRecyclerView.scrollToPosition(arrayListOfCountriesAndCapitals.size - 1)
 
                     alertDialog.dismiss()
+                    setItemList("key",arrayListOfCountriesAndCapitals)
                 }
 
             }
         }
+
     }
 
     private fun setupAlertDialog(): Pair<View, AlertDialog> {
@@ -99,6 +110,19 @@ class MainActivity : AppCompatActivity() {
         listsRecyclerView.adapter =
             ListSelectionRecyclerViewAdapter(arrayListOfCountriesAndCapitals,this)
         listsRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+    //this function is to set the shared preference recycler view list
+    fun setItemList(key: String, ArrayList: ArrayList<ArrayList<String>>) {
+        val arrayString = Gson().toJson(ArrayList)
+        sharedPreferences.edit().putString(key, arrayString).apply()
+    }
+    //this function is to get the shared preference list
+    fun getItemList(key: String): ArrayList<ArrayList<String>> {
+        val emptyList = Gson().toJson(ArrayList<ArrayList<String>>())
+        return Gson().fromJson(sharedPreferences.getString(key, emptyList), object :
+            TypeToken<ArrayList<ArrayList<String>>>() {
+        }.type)
+
     }
 
 }
